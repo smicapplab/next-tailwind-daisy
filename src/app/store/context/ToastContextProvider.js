@@ -10,32 +10,75 @@ export const ToastType = {
   error: "error",
 };
 
+const getAlignmentClass = ({ horizontal, vertical }) => {
+  const horizontalAlignment = horizontal || "center";
+  const verticalAlignment = vertical || "top";
+
+  const horizontalClass =
+    horizontalAlignment === "left"
+      ? "toast-start"
+      : horizontalAlignment === "right"
+      ? "toast-end"
+      : "toast-center";
+
+  const verticalClass =
+    verticalAlignment === "top"
+      ? "toast-top"
+      : verticalAlignment === "bottom"
+      ? "toast-bottom"
+      : "toast-middle";
+
+  return `${verticalClass} ${horizontalClass}`;
+};
+
 export function ToastProvider({ children }) {
-  const [toast, setToast] = useState(null);
+  const [toasts, setToasts] = useState([]);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    if (toast) {
-      setTimeout(() => setToast(null), 5000);
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (isMounted) {
+      const timers = toasts.map((toast) =>
+        setTimeout(() => removeToast(toast.id), 5000)
+      );
+
+      return () => {
+        timers.forEach(clearTimeout);
+      };
     }
-  }, [toast]);
+  }, [toasts, isMounted]);
 
   const addToast = (props) => {
-    setToast(props);
+    const id = Date.now();
+    setToasts((prevToasts) => [...prevToasts, { ...props, id }]);
   };
+
+  const removeToast = (id) => {
+    setToasts((prevToasts) => prevToasts.filter((toast) => toast.id !== id));
+  };
+
+  if (!isMounted) {
+    return null;
+  }
 
   return (
     <ToastContext.Provider value={{ addToast }}>
       {children}
-      {toast && (
-        <div className="toast toast-top toast-center">
-          <div className="alert alert-info">
-            <span>New mail arrived.</span>
+      <div
+        className={`toast ${getAlignmentClass({
+          horizontal: "center",
+          vertical: "top",
+        })}`}
+      >
+        {toasts.map((toast) => (
+          <div className={`alert alert-${toast.type || "info"}`}>
+            <span>{toast.message}</span>
           </div>
-          <div className="alert alert-success">
-            <span>Message sent successfully.</span>
-          </div>
-        </div>
-      )}
+        ))}
+      </div>
     </ToastContext.Provider>
   );
 }

@@ -3,7 +3,7 @@
 import { createContext, useState } from "react";
 import { googleLogout } from "@react-oauth/google";
 import axios from "axios";
-import { postApi } from "@/app/helpers/api-helpers";
+import { postApi } from "@/helpers/api-helpers";
 
 export const UserContext = createContext();
 
@@ -33,8 +33,8 @@ export function UserProvider({ children }) {
     let error;
     try {
       let result = await postApi("auth/fetch-user");
-      data = result;
-      setRole(result.userRole);
+      // data = result;
+      // setRole(result.userRole);
     } catch (err) {
       error = err;
       setLoading(false);

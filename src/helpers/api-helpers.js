@@ -1,8 +1,6 @@
 import axios from "axios";
 
 const postApi = async (url, data) => {
-  console.log('url', `${process.env.NEXT_PUBLIC_URL}/api/${url}`);
-
   const res = await axios.post(
     `${process.env.NEXT_PUBLIC_URL}/api/${url}`,
     data,

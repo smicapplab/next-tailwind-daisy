@@ -1,4 +1,4 @@
-import { decodeToken } from "@/helpers/sessionHelper";
+import { decodeToken } from "@/helpers/session-helper";
 import { NextResponse } from "next/server";
 
 export async function POST(request) {

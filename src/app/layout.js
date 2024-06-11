@@ -1,6 +1,5 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
-import { GoogleOAuthProvider } from "@react-oauth/google";
 import { ToastProvider } from "./store/context/ToastContextProvider";
 import { UserProvider } from "./store/context/UserContextProvider";
 
