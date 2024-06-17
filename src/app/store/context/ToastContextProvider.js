@@ -77,20 +77,7 @@ const getAlignmentClass = ({ horizontal, vertical }) => {
 };
 
 export function ToastProvider({ children }) {
-  const [toasts, setToasts] = useState([
-    {
-      message: "Our platform is designed to help",
-      type: "error",
-    },
-    {
-      message: "Our platform is designed to help",
-      type: "info",
-    },
-    {
-      message: "Our platform is designed to help",
-      type: "success",
-    },
-  ]);
+  const [toasts, setToasts] = useState([]);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {

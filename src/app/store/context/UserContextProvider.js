@@ -9,7 +9,6 @@ export const UserContext = createContext();
 
 export function UserProvider({ children }) {
   const [userInfo, setUserInfo] = useState({});
-  const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const doLogout = async () => {
@@ -24,7 +23,6 @@ export function UserProvider({ children }) {
       }
     );
     setUserInfo({});
-    setRole(null);
   };
 
   const fetchUser = async (arg) => {
@@ -33,9 +31,9 @@ export function UserProvider({ children }) {
     let error;
     try {
       let result = await postApi("auth/fetch-user");
-      // data = result;
-      // setRole(result.userRole);
+      data = result;
     } catch (err) {
+      console.error*(err)
       error = err;
       setLoading(false);
     }
@@ -49,15 +47,13 @@ export function UserProvider({ children }) {
 
     setUserInfo(curUserInfo);
     setLoading(false);
-    return userInfo;
+    return curUserInfo;
   };
 
   return (
     <UserContext.Provider
       value={{
         userInfo: userInfo,
-        role,
-        setRole,
         refetchUser: fetchUser,
         loadingUserInfo: loading,
         doLogout,
