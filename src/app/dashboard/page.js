@@ -1,6 +1,8 @@
 "use client";
 
-export default function Dashboard() {
+import withAuth from "@/helpers/WithAuth";
+
+function Dashboard() {
 
   return (
     <div className="hero min-h-screen bg-white">
@@ -8,3 +10,5 @@ export default function Dashboard() {
     </div>
   );
 }
+
+export default withAuth(Dashboard)

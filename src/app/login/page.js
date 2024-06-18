@@ -1,5 +1,5 @@
 "use client";
-
+import React from "react";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useContext } from "react";
 import { UserContext } from "../store/context/UserContextProvider";
@@ -8,11 +8,10 @@ import axios from "axios";
 import withAuth from "@/helpers/WithAuth";
 import { useRouter } from "next/navigation";
 
-function Login() {
+const Login = () => {
   const router = useRouter();
   const { refetchUser } = useContext(UserContext);
   const { addToast } = useContext(ToastContext);
-
 
   const login = useGoogleLogin({
     onSuccess: async (tokenResponse) => {

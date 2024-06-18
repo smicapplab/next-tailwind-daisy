@@ -1,15 +1,16 @@
+"use client";
+
 import "../globals.css";
-import { Inter } from "next/font/google";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { ToastProvider } from "../store/context/ToastContextProvider";
+import { UserProvider } from "../store/context/UserContextProvider";
 
-const inter = Inter({ subsets: ["latin-ext"] });
-
-export default function RootLayout({ children }) {
+export default function LoginLayout({ children }) {
   return (
-    <html lang="en">
+    <section>
       <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}>
         {children}
       </GoogleOAuthProvider>
-    </html>
+    </section>
   );
 }

@@ -1,16 +1,18 @@
+"use client";
+
 import "./globals.css";
-import { Inter } from "next/font/google";
 import { ToastProvider } from "./store/context/ToastContextProvider";
 import { UserProvider } from "./store/context/UserContextProvider";
-
-const inter = Inter({ subsets: ["latin-ext"] });
+import NavBar from "./components/NavBar";
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body>
         <ToastProvider>
-          <UserProvider>{children}</UserProvider>
+          <UserProvider>
+            <NavBar/>{children}
+          </UserProvider>
         </ToastProvider>
       </body>
     </html>
