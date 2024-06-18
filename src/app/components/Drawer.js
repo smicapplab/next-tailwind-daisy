@@ -64,7 +64,8 @@ export default function Drawer(props) {
             ))}
           </ul>
           <div className="text-sm text-gray-600 absolute bottom-0 text-center w-full mb-5">
-            &copy; 2024 Koredor 
+            &copy; 2024 Koredor <br/>
+            Demo purposes only
           </div>
         </div>
       </div>

@@ -32,7 +32,7 @@ const NavBar = () => {
         <label htmlFor="koredor-drawer">
           <MenuIcon className="text-secondary" />
         </label>
-        <a className="btn btn-ghost text-xl logo-font" onClick={() => router.replace("/dashboard")}>
+        <a className="btn btn-ghost text-3xl logo-font" onClick={() => router.replace("/dashboard")}>
           koredor
         </a>
       </div>
