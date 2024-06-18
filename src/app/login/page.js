@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 
 const Login = () => {
   const router = useRouter();
-  const { refetchUser } = useContext(UserContext);
+  const { refetchUser, doLogout } = useContext(UserContext);
   const { addToast } = useContext(ToastContext);
 
   const login = useGoogleLogin({
@@ -20,7 +20,6 @@ const Login = () => {
       });
       if (data.success && data.data ) {
         await refetchUser();
-        router.replace("/dashboard")
       } else {
         addToast({
           message: data.message ?? data?.data?.message ?? data?.error?.message,
@@ -29,6 +28,11 @@ const Login = () => {
       }
     },
   });
+
+
+  const logout = async () => {
+    await doLogout();
+  }
 
   return (
     <div className="hero min-h-screen bg-white">

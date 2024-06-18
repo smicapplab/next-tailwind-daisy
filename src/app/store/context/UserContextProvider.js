@@ -12,6 +12,7 @@ export function UserProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   const doLogout = async () => {
+    setLoading(true);
     googleLogout();
     await axios.post(
       `${process.env.NEXT_PUBLIC_URL}/api/auth/do-logout`,
@@ -23,6 +24,7 @@ export function UserProvider({ children }) {
       }
     );
     setUserInfo({});
+    setLoading(false);
   };
 
   const fetchUser = async (arg) => {
@@ -30,24 +32,27 @@ export function UserProvider({ children }) {
     let data = {};
     let error;
     try {
-      let result = await postApi("auth/fetch-user");
-      data = result;
+      const fetchResult = await postApi("auth/fetch-user");
+      if( fetchResult.success ){
+        setUserInfo({
+          isAuthenticated: true,
+          user: fetchResult,
+          lastFetched: new Date().getTime(),
+        });
+      }else{
+        setUserInfo({
+          isAuthenticated: false,
+          message: fetchResult.message,
+          user: {},
+        });
+      }
     } catch (err) {
-      console.error*(err)
+      console.error * err;
       error = err;
+      setUserInfo({});
+    } finally {
       setLoading(false);
     }
-
-    const curUserInfo = {
-      user: data,
-      isAuthenticated: data?.email ? true : false,
-      lastFetched: new Date().getTime(),
-      error,
-    };
-
-    setUserInfo(curUserInfo);
-    setLoading(false);
-    return curUserInfo;
   };
 
   return (

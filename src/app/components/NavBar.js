@@ -1,56 +1,62 @@
 "use client";
 
-export default function NavBar(props){
+import { useContext, useEffect } from "react";
+import { UserContext } from "../store/context/UserContextProvider";
+import MenuIcon from "./Icons/MenuIcon";
+import { useRouter } from "next/navigation";
+
+const NavBar = () => {
+  const { userInfo, doLogout, refetchUser } = useContext(UserContext);
+  const router = useRouter()
+  const user = userInfo?.user;
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      await refetchUser();
+    };
+    fetchUsers();
+  }, []);
+
+  const getInitials = (name) => {
+    if (!name) return "";
+    const initials = name
+      .split(" ")
+      .map((n) => n[0])
+      .join("");
+    return initials.toUpperCase();
+  };
+
   return (
     <div className="navbar bg-base-100">
       <div className="flex-1">
-        <a className="btn btn-ghost text-xl">daisyUI</a>
+        <label htmlFor="koredor-drawer">
+          <MenuIcon className="text-secondary" />
+        </label>
+        <a className="btn btn-ghost text-xl logo-font" onClick={() => router.replace("/dashboard")}>
+          koredor
+        </a>
       </div>
       <div className="flex-none">
-        <div className="dropdown dropdown-end">
-          <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
-            <div className="indicator">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-                />
-              </svg>
-              <span className="badge badge-sm indicator-item">8</span>
-            </div>
-          </div>
-          <div
-            tabIndex={0}
-            className="mt-3 z-[1] card card-compact dropdown-content w-52 bg-base-100 shadow"
-          >
-            <div className="card-body">
-              <span className="font-bold text-lg">8 Items</span>
-              <span className="text-info">Subtotal: $999</span>
-              <div className="card-actions">
-                <button className="btn btn-primary btn-block">View cart</button>
-              </div>
-            </div>
-          </div>
-        </div>
         <div className="dropdown dropdown-end">
           <div
             tabIndex={0}
             role="button"
             className="btn btn-ghost btn-circle avatar"
           >
-            <div className="w-10 rounded-full">
-              <img
-                alt="Tailwind CSS Navbar component"
-                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
-              />
+            <div className="w-10 h-10 rounded-full bg-gray-500 flex items-center justify-center text-white">
+              {user?.picture ? (
+                <img
+                  alt={user?.name}
+                  src={user.picture}
+                  className="rounded-full w-full h-full object-cover"
+                />
+              ) : (
+                <div class="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
+                  <span class="text-xl text-gray-600 dark:text-gray-300">
+                    {getInitials(user?.name)}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
           <ul
@@ -58,16 +64,13 @@ export default function NavBar(props){
             className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
           >
             <li>
-              <a className="justify-between">
-                Profile
-                <span className="badge">New</span>
-              </a>
+              <a className="justify-between">Profile</a>
             </li>
             <li>
               <a>Settings</a>
             </li>
             <li>
-              <a>Logout</a>
+              <a onClick={doLogout}>Logout</a>
             </li>
           </ul>
         </div>
@@ -75,3 +78,5 @@ export default function NavBar(props){
     </div>
   );
 };
+
+export default NavBar;

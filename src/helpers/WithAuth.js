@@ -6,7 +6,7 @@ export default function withAuth(Component) {
   return function ProtectedRoute({ ...props }) {
     const router = useRouter();
     const pathname = usePathname();
-    const { refetchUser, userInfo, loading } = useContext(UserContext);
+    const { refetchUser, userInfo, loadingUserInfo } = useContext(UserContext);
 
     useEffect(() => {
       const fetchUsers = async () => {
@@ -16,12 +16,18 @@ export default function withAuth(Component) {
     }, []);
 
     useEffect(() => {
-      if (!loading && userInfo && pathname) {
-        if (!userInfo?.isAuthenticated) {
-          router.replace("/login");
-        } 
+      if (!loadingUserInfo) {
+        if (!userInfo || !userInfo.isAuthenticated) {
+          if (pathname !== "/login") {
+            router.replace("/login");
+          }
+        } else if (pathname === "/login") {
+          router.replace("/dashboard");
+        } else if (pathname === "/") {
+          router.replace("/dashboard");
+        }
       }
-    }, [loading, pathname, userInfo]);
+    }, [loadingUserInfo, pathname, userInfo]);
 
     return <Component {...props} />;
   };

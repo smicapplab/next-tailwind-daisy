@@ -1,5 +1,3 @@
-"use client";
-
 import { createContext, useEffect, useState } from "react";
 export const ToastContext = createContext();
 
@@ -118,8 +116,8 @@ export function ToastProvider({ children }) {
           vertical: "top",
         })}`}
       >
-        {toasts.map((toast) => (
-          <div className={`alert alert-${toast.type || "info"}`}>
+        {toasts.map((toast, i) => (
+          <div key={i} className={`alert alert-${toast.type || "info"}`}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="stroke-current shrink-0 h-6 w-6"
