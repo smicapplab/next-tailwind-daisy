@@ -124,53 +124,53 @@ function Dashboard() {
       </div>
 
       <div className="text-lg text-gray-800">Exposure by Credit Rating</div>
-      <div class="grid grid-cols-2 gap-4 mb-10">
-        <div class="grid grid-cols-11 gap-4 p-4 bg-white rounded-2xl shadow-md ">
-          <div class="p-2 col-span-1 h-10 right text-sm">A+</div>
-          <div class="bg-primary p-2 col-span-10 w-1/5 h-10"></div>
-          <div class="p-2 col-span-1 h-10 text-sm">A</div>
-          <div class="bg-primary p-2 col-span-10 w-1/3 h-10"></div>
-          <div class="p-2 col-span-1 h-10 text-sm">B</div>
-          <div class="bg-primary p-2 col-span-10 w-1/2 h-10"></div>
-          <div class="p-2 col-span-1 h-10 text-sm">B-</div>
-          <div class="bg-primary p-2 col-span-10 w-full h-10"></div>
-          <div class="p-2 col-span-1 h-10 text-sm">C+</div>
-          <div class="bg-primary p-2 col-span-10 w-1/5 h-10"></div>
-          <div class="p-2 col-span-1 h-10 text-sm">C</div>
-          <div class="bg-primary p-2 col-span-10 w-1/3 h-10"></div>
-          <div class="p-2 col-span-1 h-10 text-sm">C-</div>
-          <div class="bg-primary p-2 col-span-10 w-1/4 h-10 "></div>
-          <div class="p-2 col-span-1 h-10"></div>
-          <div class="p-2 col-span-2 h-10 text-sm text-gray-800">0</div>
-          <div class="p-2 col-span-2 h-10 text-sm text-gray-800">5M</div>
-          <div class="p-2 col-span-2 h-10 text-sm text-gray-800">10M</div>
-          <div class="p-2 col-span-2 h-10 text-sm text-gray-800">15M</div>
-          <div class="p-2 col-span-2 h-10 text-sm text-gray-800">20M</div>
+      <div className="grid grid-cols-2 gap-4 mb-10">
+        <div className="grid grid-cols-11 gap-4 p-4 bg-white rounded-2xl shadow-md ">
+          <div className="p-2 col-span-1 h-10 right text-sm">A+</div>
+          <div className="bg-primary p-2 col-span-10 w-1/5 h-10"></div>
+          <div className="p-2 col-span-1 h-10 text-sm">A</div>
+          <div className="bg-primary p-2 col-span-10 w-1/3 h-10"></div>
+          <div className="p-2 col-span-1 h-10 text-sm">B</div>
+          <div className="bg-primary p-2 col-span-10 w-1/2 h-10"></div>
+          <div className="p-2 col-span-1 h-10 text-sm">B-</div>
+          <div className="bg-primary p-2 col-span-10 w-full h-10"></div>
+          <div className="p-2 col-span-1 h-10 text-sm">C+</div>
+          <div className="bg-primary p-2 col-span-10 w-1/5 h-10"></div>
+          <div className="p-2 col-span-1 h-10 text-sm">C</div>
+          <div className="bg-primary p-2 col-span-10 w-1/3 h-10"></div>
+          <div className="p-2 col-span-1 h-10 text-sm">C-</div>
+          <div className="bg-primary p-2 col-span-10 w-1/4 h-10 "></div>
+          <div className="p-2 col-span-1 h-10"></div>
+          <div className="p-2 col-span-2 h-10 text-sm text-gray-800">0</div>
+          <div className="p-2 col-span-2 h-10 text-sm text-gray-800">5M</div>
+          <div className="p-2 col-span-2 h-10 text-sm text-gray-800">10M</div>
+          <div className="p-2 col-span-2 h-10 text-sm text-gray-800">15M</div>
+          <div className="p-2 col-span-2 h-10 text-sm text-gray-800">20M</div>
         </div>
       </div>
 
       <div className="text-lg text-gray-800">Exposure by Industry</div>
-      <div class="grid grid-cols-2 gap-4 mb-10">
-        <div class="grid grid-cols-11 gap-4 p-4 bg-white rounded-2xl shadow-md ">
-          <div class="p-2 col-span-3 h-10 text-sm">Manufacturing</div>
-          <div class="bg-primary p-2 col-span-8 w-11/12 h-10"></div>
-          <div class="p-2 col-span-3 h-10 text-sm">Healthcare Equipment</div>
-          <div class="bg-primary p-2 col-span-8 w-1/2 h-10"></div>
-          <div class="p-2 col-span-3 h-10 text-sm">Construction</div>
-          <div class="bg-primary p-2 col-span-8 w-full h-10"></div>
-          <div class="p-2 col-span-3 h-10 text-sm">Installation</div>
-          <div class="bg-primary p-2 col-span-8 w-1/5 h-10"></div>
-          <div class="p-2 col-span-3 h-10 text-sm">Trading</div>
-          <div class="bg-primary p-2 col-span-8 w-1/3 h-10"></div>
-          <div class="p-2 col-span-3 h-10 text-sm">Services</div>
-          <div class="bg-primary p-2 col-span-8 w-11/12 h-10 "></div>
-          <div class="p-2 col-span-3 h-10 text-sm">Materials</div>
-          <div class="bg-primary p-2 col-span-8 w-1/5 h-10"></div>
-          <div class="p-2 col-span-3 h-10"></div>
-          <div class="p-2 col-span-2 h-10 text-sm text-gray-800">0</div>
-          <div class="p-2 col-span-2 h-10 text-sm text-gray-800">5M</div>
-          <div class="p-2 col-span-2 h-10 text-sm text-gray-800">10M</div>
-          <div class="p-2 col-span-2 h-10 text-sm text-gray-800">15M</div>
+      <div className="grid grid-cols-2 gap-4 mb-10">
+        <div className="grid grid-cols-11 gap-4 p-4 bg-white rounded-2xl shadow-md ">
+          <div className="p-2 col-span-3 h-10 text-sm">Manufacturing</div>
+          <div className="bg-primary p-2 col-span-8 w-11/12 h-10"></div>
+          <div className="p-2 col-span-3 h-10 text-sm">Healthcare Equipment</div>
+          <div className="bg-primary p-2 col-span-8 w-1/2 h-10"></div>
+          <div className="p-2 col-span-3 h-10 text-sm">Construction</div>
+          <div className="bg-primary p-2 col-span-8 w-full h-10"></div>
+          <div className="p-2 col-span-3 h-10 text-sm">Installation</div>
+          <div className="bg-primary p-2 col-span-8 w-1/5 h-10"></div>
+          <div className="p-2 col-span-3 h-10 text-sm">Trading</div>
+          <div className="bg-primary p-2 col-span-8 w-1/3 h-10"></div>
+          <div className="p-2 col-span-3 h-10 text-sm">Services</div>
+          <div className="bg-primary p-2 col-span-8 w-11/12 h-10 "></div>
+          <div className="p-2 col-span-3 h-10 text-sm">Materials</div>
+          <div className="bg-primary p-2 col-span-8 w-1/5 h-10"></div>
+          <div className="p-2 col-span-3 h-10"></div>
+          <div className="p-2 col-span-2 h-10 text-sm text-gray-800">0</div>
+          <div className="p-2 col-span-2 h-10 text-sm text-gray-800">5M</div>
+          <div className="p-2 col-span-2 h-10 text-sm text-gray-800">10M</div>
+          <div className="p-2 col-span-2 h-10 text-sm text-gray-800">15M</div>
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    reactStrictMode: true,
+    reactStrictMode: process.env.ENVIRONMENT !== "Local",
 };
 
 export default nextConfig;

@@ -9,13 +9,13 @@ export default function AuthenticatedLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <ToastProvider>
           <UserProvider>
             <NavBar />
             <Drawer />
+            <ToastProvider>
             {children}
+            </ToastProvider>
           </UserProvider>
-        </ToastProvider>
       </body>
     </html>
   );

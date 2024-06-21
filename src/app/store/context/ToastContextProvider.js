@@ -1,4 +1,5 @@
 import { createContext, useEffect, useState } from "react";
+
 export const ToastContext = createContext();
 
 export const ToastType = {
@@ -77,6 +78,7 @@ const getAlignmentClass = ({ horizontal, vertical }) => {
 export function ToastProvider({ children }) {
   const [toasts, setToasts] = useState([]);
   const [isMounted, setIsMounted] = useState(false);
+  let counter = 0;
 
   useEffect(() => {
     setIsMounted(true);
@@ -95,7 +97,10 @@ export function ToastProvider({ children }) {
   }, [toasts, isMounted]);
 
   const addToast = (props) => {
-    const id = Date.now();
+    if (toasts.some(toast => toast.message === props.message)) {
+      return;
+    }
+    const id = `id-${Date.now()}-${++counter}`;
     setToasts((prevToasts) => [...prevToasts, { ...props, id }]);
   };
 
@@ -116,8 +121,8 @@ export function ToastProvider({ children }) {
           vertical: "top",
         })}`}
       >
-        {toasts.map((toast, i) => (
-          <div key={i} className={`alert alert-${toast.type || "info"}`}>
+        {toasts.map((toast) => (
+          <div key={toast.id} className={`alert alert-${toast.type || "info"}`}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="stroke-current shrink-0 h-6 w-6"
