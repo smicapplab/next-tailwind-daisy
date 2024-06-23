@@ -1,7 +1,11 @@
 "use client";
 
-export default function Home() {
+import withAuth from "@/helpers/WithAuth";
+
+function Home() {
   return (
-    <div>Test</div>
+    <div></div>
   );
 }
+
+export default withAuth(Home)

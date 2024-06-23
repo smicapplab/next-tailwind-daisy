@@ -1,18 +1,32 @@
-import "./globals.css";
-import { Inter } from "next/font/google";
-import { ToastProvider } from "./store/context/ToastContextProvider";
-import { UserProvider } from "./store/context/UserContextProvider";
 
-const inter = Inter({ subsets: ["latin-ext"] });
+"use client";
+
+import { usePathname } from 'next/navigation';
+import LoginLayout from './login/layout';
+import AuthenticatedLayout from './AuthenticatedLayout';
 
 export default function RootLayout({ children }) {
+  const pathname = usePathname();
+
+  if (pathname.startsWith('/login')) {
+    return (
+      <html lang="en">
+        <body>
+          <LoginLayout>
+            {children}
+          </LoginLayout>
+        </body>
+      </html>
+    );
+  }
+
   return (
     <html lang="en">
-        <ToastProvider>
-          <UserProvider>
-            <body className={inter.className}>{children}</body>
-          </UserProvider>
-        </ToastProvider>
+      <body>
+        <AuthenticatedLayout>
+          {children}
+        </AuthenticatedLayout>
+      </body>
     </html>
   );
 }

@@ -11,7 +11,6 @@ export async function POST(request) {
     return NextResponse.json({
       success: false,
       message: "Session object is empty!",
-      decoded: user,
     });
   } catch (e) {
     console.error("error", e);
