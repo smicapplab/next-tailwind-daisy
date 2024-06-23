@@ -12,18 +12,21 @@ const svgIcons = {
 
 const TextInput = ({
   name,
-  placeholder = "Text Input",
+  value,
+  placeholder = "",
   startIcon,
   endIcon,
+  type = "text"
 }) => {
   return (
     <label className="input input-bordered flex items-center gap-2">
       {startIcon && svgIcons[startIcon]}
       <input
-        type="text"
+        type={type}
         className="grow"
         placeholder={placeholder}
         name={name}
+        value={value}
       />
       {endIcon && svgIcons[endIcon]}
     </label>

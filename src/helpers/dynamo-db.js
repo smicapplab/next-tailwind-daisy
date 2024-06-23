@@ -168,7 +168,7 @@ const updateOne = async ({ item, tableName, updateOnly = false }) => {
         ...(item.sk ? { sk: item["sk"] } : {}),
       },
     };
-    //console.log(params);
+
     const response = await documentClient.send(new UpdateCommand(params));
     return response;
   } catch (error) {
@@ -299,7 +299,7 @@ const deleteOne = async ({ pk, sk, tableName }) => {
   if (sk) {
     params["Key"]["sk"] = sk;
   }
-  //console.log({ params })
+
   const data = await documentClient.send(new DeleteCommand(params));
   return data;
 };

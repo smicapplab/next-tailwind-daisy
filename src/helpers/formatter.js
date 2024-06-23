@@ -13,6 +13,19 @@ const formatToPeso = (amount) => {
   return formatter.format(amount);
 };
 
+const formatCurrency = (amount) => {
+  if (isNaN(amount)) {
+    throw new Error("Input must be a number");
+  }
+
+  const options = {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  };
+  const formatter = new Intl.NumberFormat("en-PH", options);
+  return formatter.format(amount);
+};
+
 const formatDate = (isoDate) => {
   const date = new Date(isoDate);
   if (isNaN(date)) {
@@ -31,4 +44,4 @@ const formatDate = (isoDate) => {
   return `${parts[0]}, ${parts[1].replace(",", "")}, ${parts[2]}`;
 };
 
-export { formatToPeso, formatDate };
+export { formatToPeso, formatCurrency, formatDate };
