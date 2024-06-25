@@ -8,10 +8,6 @@ const CreditParameter = ({ selectedNote, doReload }) => {
   const [noteToAssess, setNoteToAssess] = useState(noteDetails);
 
   const doSubmit = async () => {
-    console.log({
-      noteToAssess
-    })
-
     const data = await postApi("assessment/run-score", {
       noteToAssess,
     });
@@ -21,8 +17,8 @@ const CreditParameter = ({ selectedNote, doReload }) => {
       modal.close();
     }
 
-    doReload()
-  }
+    doReload();
+  };
 
   const updateNote = (field, value) => {
     setNoteToAssess((prevNote) => {
@@ -45,7 +41,7 @@ const CreditParameter = ({ selectedNote, doReload }) => {
 
   useEffect(() => {
     setNoteToAssess(noteDetails);
-  }, [noteDetails]);
+  }, [selectedNote]);
 
   return (
     <dialog id="credit-modal" className="modal modal-bottom sm:modal-middle">
@@ -58,81 +54,120 @@ const CreditParameter = ({ selectedNote, doReload }) => {
         <h3 className="font-bold text-lg">
           {noteToAssess.loanNumber} ({noteToAssess.businessName})
         </h3>
-        <div className="py-4 grid grid-cols-4 gap-4">
-          <CheckboxWithBadge
-            label="Field Survey"
-            field="fieldSurvey"
-            value={noteToAssess.fieldSurvey}
-            onChange={updateNote}
-          />
-
-          <CheckboxWithBadge
-            label="Payment Underlying"
-            field="paymentUnderlying"
-            value={noteToAssess.paymentUnderlying}
-            onChange={updateNote}
-            trueLabel="Common"
-            falseLabel="Solid"
-            trueClass="badge-primary"
-            falseClass="badge-secondary"
-          />
-
-          <div className="p-2 col-span-2 h-10">Bank Debt</div>
-          <div className="p-2 col-span-2 h-10">
-            <LimitedInput
-              value={noteToAssess?.bankDebt || ""}
-              onChange={(value) => updateNote("bankDebt", value)}
-            />
-          </div>
-
-          <div className="p-2 col-span-2 h-10">Ongoing Applications Amount</div>
-          <div className="p-2 col-span-2 h-10">
-            <LimitedInput
-              min={0}
-              max={10000000}
-              value={noteToAssess?.loanAmount || ""}
-              onChange={(value) => updateNote("loanAmount", value)}
-            />
-          </div>
-
-          <div className="p-2 col-span-2 h-10">Industry Margin (%)</div>
-          <div className="p-2 col-span-2 h-10">
-            <LimitedInput
-              min={0}
-              max={100}
-              value={noteToAssess?.industry?.averageMargin || ""}
-              onChange={(value) => updateNote("averageMargin", value)}
-              width="40%"
-            />
-          </div>
-
-          <CheckboxWithBadge
-            label="NFIS check"
-            field="nfis"
-            value={noteToAssess.nfis}
-            onChange={updateNote}
-          />
-
-          <CheckboxWithBadge
-            label="CMAP check"
-            field="aml"
-            value={noteToAssess.aml}
-            onChange={updateNote}
-          />
-
-          <CheckboxWithBadge
-            label="AML check"
-            field="cmap"
-            value={noteToAssess.cmap}
-            onChange={updateNote}
-          />
+        <div className="divider w-full"></div>
+        <div className="overflow-x-auto">
+          <table className="table">
+            <tbody>
+              <tr className="hover">
+                <td className="text-primary font-bold">Field Survey</td>
+                <td className="hover">
+                  <CheckboxWithBadge
+                    label=""
+                    field="fieldSurvey"
+                    value={noteToAssess.fieldSurvey}
+                    onChange={updateNote}
+                  />
+                </td>
+              </tr>
+              <tr className="hover">
+                <td className="text-primary font-bold">Payment Underlying</td>
+                <td>
+                  <CheckboxWithBadge
+                    label="Payment Underlying"
+                    field="paymentUnderlying"
+                    value={noteToAssess.paymentUnderlying}
+                    onChange={updateNote}
+                    trueLabel="Common"
+                    falseLabel="Solid"
+                    trueClass="badge-neutral"
+                    falseClass="badge-warning"
+                  />
+                </td>
+              </tr>
+              <tr className="hover">
+                <td className="text-primary font-bold">Bank Debt</td>
+                <td>
+                  <LimitedInput
+                    value={noteToAssess?.bankDebt || "0.00"}
+                    onChange={(value) => updateNote("bankDebt", value)}
+                  />
+                </td>
+              </tr>
+              <tr className="hover">
+                <td className="text-primary font-bold">Ongoing Applications Amount</td>
+                <td>
+                  {" "}
+                  <LimitedInput
+                    min={0}
+                    max={10000000}
+                    value={noteToAssess?.loanAmount || "0.00"}
+                    onChange={(value) => updateNote("loanAmount", value)}
+                  />
+                </td>
+              </tr>
+              <tr className="hover">
+                <td className="text-primary font-bold">Industry Name / Score</td>
+                <td>
+                  {noteToAssess?.industry?.name} /{" "}
+                  {noteToAssess?.industry?.industryScore}
+                </td>
+              </tr>
+              <tr className="hover">
+                <td className="text-primary font-bold">Industry Margin (%)</td>
+                <td>
+                  <LimitedInput
+                    min={0}
+                    max={100}
+                    value={noteToAssess?.industry?.averageMargin || "0.00"}
+                    onChange={(value) => updateNote("averageMargin", value)}
+                    width="40%"
+                  />
+                </td>
+              </tr>
+              <tr className="hover">
+                <td className="text-primary font-bold">NFIS check</td>
+                <td>
+                  <CheckboxWithBadge
+                    field="nfis"
+                    value={noteToAssess.nfis}
+                    onChange={updateNote}
+                  />
+                </td>
+              </tr>
+              <tr className="hover">
+                <td className="text-primary font-bold">AML check</td>
+                <td>
+                  <CheckboxWithBadge
+                    field="aml"
+                    value={noteToAssess.aml}
+                    onChange={updateNote}
+                  />
+                </td>
+              </tr>
+              <tr className="hover">
+                <td className="text-primary font-bold">CMAP check</td>
+                <td>
+                  <CheckboxWithBadge
+                    field="cmap"
+                    value={noteToAssess.cmap}
+                    onChange={updateNote}
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
+
+        <div className="py-4 grid grid-cols-4 gap-4 text-sm "></div>
         <div className="divider w-full"></div>
         <div className="flex place-content-between">
           <form method="dialog">
             <button className="btn btn-active">Cancel</button>
           </form>
-          <button className="btn btn-active btn-secondary text-white" onClick={doSubmit}>
+          <button
+            className="btn btn-active btn-secondary text-white"
+            onClick={doSubmit}
+          >
             Submit
           </button>
         </div>

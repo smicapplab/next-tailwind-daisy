@@ -23,9 +23,14 @@ body {
   }
 }
 
-
 .logo-font {
   font-family: "League Spartan", sans-serif;
   color: #FF6B35;
   padding-left: 15px;
+}
+
+/* Ensure HTML content is rendered correctly */
+.tooltip[data-tip]::after {
+  white-space: pre-line; /* Handles line breaks */
+  content: attr(data-tip); /* Ensure the tooltip content is correctly parsed */
 }

@@ -23,23 +23,23 @@ const unmarshallOptions = {
 const translateConfig = { marshallOptions, unmarshallOptions };
 
 let credentials = {};
-if( process.env.accessKeyId && process.env.secretAccessKey ){
+if (process.env.accessKeyId && process.env.secretAccessKey) {
   credentials = {
     credentials: {
       accessKeyId: process.env.accessKeyId,
       secretAccessKey: process.env.secretAccessKey,
-    }
-  }
+    },
+  };
 }
 
 const dynamoClient = new DynamoDBClient({
   region: "ap-southeast-1",
-  ...credentials
+  ...credentials,
 });
 
 let documentClient = DynamoDBDocumentClient.from(dynamoClient, translateConfig);
 
-const create = async ({ item, tableName }) => {
+export const create = async ({ item, tableName }) => {
   const params = {
     Item: item,
     TableName: tableName,
@@ -53,7 +53,7 @@ const create = async ({ item, tableName }) => {
   }
 };
 
-const find = async ({
+export const find = async ({
   pk,
   sk,
   FilterExpression,
@@ -104,14 +104,14 @@ const find = async ({
   return data;
 };
 
-const findOne = async ({ pk, sk, tableName }) => {
+export const findOne = async ({ pk, sk, tableName }) => {
   let params = {
     TableName: tableName,
     Key: {
       pk,
     },
   };
-  
+
   try {
     if (sk) {
       params["Key"]["sk"] = sk;
@@ -125,14 +125,14 @@ const findOne = async ({ pk, sk, tableName }) => {
   }
 };
 
-const updateOne = async ({ item, tableName, updateOnly = false }) => {
+export const updateOne = async ({ item, tableName, updateOnly = false }) => {
   if (updateOnly) {
     const currentData = await findOne({
       tableName,
       pk: item["pk"],
       ...(item["sk"] ? { sk: item["sk"] } : {}),
     });
-    
+
     if (!currentData) {
       throw new Error("Data does not exists");
     }
@@ -177,7 +177,7 @@ const updateOne = async ({ item, tableName, updateOnly = false }) => {
   }
 };
 
-const findByIndex = async ({
+export const findByIndex = async ({
   indexName,
   query,
   limit,
@@ -238,7 +238,62 @@ const findByIndex = async ({
   return data;
 };
 
-const findOneByIndex = async ({ 
+export const countRecordsByIndex = async ({
+  indexName,
+  query,
+  tableName,
+  fromDate = null,
+  toDate = null,
+  range = null,
+  FilterExpression,
+  ExpressionAttributeValues,
+}) => {
+  const queryKeys = Object.keys(query);
+  let params = {
+    TableName: tableName,
+    Select: "COUNT",
+    KeyConditionExpression: `${queryKeys
+      .map((k, index) => `${k} = :value${index}`)
+      .join(" AND ")} ${
+      fromDate ? `AND ${range} BETWEEN :fromDate AND :toDate` : ""
+    }`,
+    ExpressionAttributeValues: {
+      ...queryKeys.reduce(
+        (accumulator, k, index) => ({
+          ...accumulator,
+          [`:value${index}`]: query[k],
+        }),
+        {}
+      ),
+      ...(fromDate ? { ":fromDate": fromDate, ":toDate": toDate } : {}),
+    },
+  };
+
+  if (indexName) {
+    params["IndexName"] = indexName;
+  }
+
+  if (FilterExpression) {
+    params["FilterExpression"] = FilterExpression;
+  }
+
+  if (ExpressionAttributeValues) {
+    params["ExpressionAttributeValues"] = {
+      ...params["ExpressionAttributeValues"],
+      ...ExpressionAttributeValues,
+    };
+  }
+
+  try {
+    const command = new QueryCommand(params);
+    const response = await documentClient.send(command);
+    return response.Count;
+  } catch (error) {
+    console.error("Error querying DynamoDB:", error);
+  }
+};
+
+export const findOneByIndex = async ({
   indexName,
   query,
   tableName,
@@ -248,9 +303,8 @@ const findOneByIndex = async ({
   range = null,
   FilterExpression,
   ExpressionAttributeValues,
- }) => {
-
-  const data = await findByIndex({ 
+}) => {
+  const data = await findByIndex({
     indexName,
     query,
     tableName,
@@ -263,14 +317,20 @@ const findOneByIndex = async ({
     limit: 1,
   });
 
-  if( data.Items && data.Items.length > 0 ){
+  if (data.Items && data.Items.length > 0) {
     return data.Items[0];
   }
 
   return null;
-}
+};
 
-const findBetween = async ({ pk, range, fromDate, toDate, tableName }) => {
+export const findBetween = async ({
+  pk,
+  range,
+  fromDate,
+  toDate,
+  tableName,
+}) => {
   let params = {
     TableName: tableName,
     KeyConditionExpression: "pk = :pk AND #range BETWEEN :fromDate AND :toDate",
@@ -288,7 +348,7 @@ const findBetween = async ({ pk, range, fromDate, toDate, tableName }) => {
   return data;
 };
 
-const deleteOne = async ({ pk, sk, tableName }) => {
+export const deleteOne = async ({ pk, sk, tableName }) => {
   let params = {
     TableName: tableName,
     Key: {
@@ -304,29 +364,15 @@ const deleteOne = async ({ pk, sk, tableName }) => {
   return data;
 };
 
-const genericQuery = async ({ params }) => {
+export const genericQuery = async ({ params }) => {
   const data = await documentClient.send(new QueryCommand(params));
   return data;
 };
 
-const removeAttributes = async ({ params }) => {
+export const removeAttributes = async ({ params }) => {
   await documentClient.send(new UpdateCommand(params));
 };
 
-const batchWrite = async ({ params }) => {
+export const batchWrite = async ({ params }) => {
   await documentClient.send(new BatchWriteCommand(params));
-}
-
-module.exports = {
-  create,
-  find,
-  findOne,
-  updateOne,
-  findByIndex,
-  findBetween,
-  deleteOne,
-  genericQuery,
-  removeAttributes,
-  findOneByIndex,
-  batchWrite,
 };

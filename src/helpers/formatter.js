@@ -1,6 +1,6 @@
 const formatToPeso = (amount) => {
   if (isNaN(amount)) {
-    throw new Error("Input must be a number");
+    return "0"
   }
 
   const options = {
@@ -15,7 +15,7 @@ const formatToPeso = (amount) => {
 
 const formatCurrency = (amount) => {
   if (isNaN(amount)) {
-    throw new Error("Input must be a number");
+    return "0"
   }
 
   const options = {
