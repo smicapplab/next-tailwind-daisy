@@ -26,22 +26,4 @@ const formatCurrency = (amount) => {
   return formatter.format(amount);
 };
 
-const formatDate = (isoDate) => {
-  const date = new Date(isoDate);
-  if (isNaN(date)) {
-    throw new Error("Invalid date");
-  }
-
-  const options = {
-    year: "numeric",
-    month: "short",
-    day: "2-digit",
-  };
-  const formatter = new Intl.DateTimeFormat("en-US", options);
-  const formattedDate = formatter.format(date);
-
-  const parts = formattedDate.split(" ");
-  return `${parts[0]}, ${parts[1].replace(",", "")}, ${parts[2]}`;
-};
-
-export { formatToPeso, formatCurrency, formatDate };
+export { formatToPeso, formatCurrency };

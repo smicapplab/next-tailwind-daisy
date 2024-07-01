@@ -1,5 +1,5 @@
 import { postApi } from "@/helpers/api-helpers";
-import { formatDate, formatToPeso } from "@/helpers/formatter";
+import { formatToPeso } from "@/helpers/formatter";
 import React, {
   useState,
   lazy,
@@ -8,9 +8,9 @@ import React, {
   useRef,
   Suspense,
 } from "react";
-import DocumentIcon from "../Icons/DocumentIcon";
 import { ToastContext } from "@/app/store/context/ToastContextProvider";
 import { SearchIcon } from "../Icons/SearchIcon";
+import { formatDate } from "date-fns";
 const AssessmentDrawer = lazy(() => import("./AssessmentDrawer"));
 const MenuIcon = lazy(() => import("../Icons/MenuIcon"));
 const CreditParameter = lazy(() => import("./CreditParameter.js"));
@@ -140,6 +140,10 @@ const Notes = ({ loanStatus, getPendingCount }) => {
     getUniqueFieldValues();
   }, [tableData]);
 
+  useEffect(() => {
+    setSelectedNote({});
+  }, []);
+
   const ActionMenu = (noteDetails) => {
     return (
       <div className="dropdown">
@@ -252,7 +256,9 @@ const Notes = ({ loanStatus, getPendingCount }) => {
                   </th>
                 ))}
                 <th className="flex justify-center items-center text-primary font-semibold text-sm">
-                  {loanStatus === "done" ? "Run Date" : <DocumentIcon />}
+                  {loanStatus === "done"
+                    ? "Run Date"
+                    : "Missing/Expired Documents"}
                 </th>
                 <th></th>
               </tr>
@@ -287,6 +293,16 @@ const Notes = ({ loanStatus, getPendingCount }) => {
                         >
                           {noteDetails.score.riskRating1}
                         </span>
+                        <span
+                          className={`badge badge-xs ml-1 p-2
+                ${noteDetails.score?.color === "WHITE" && "badge-outline"}
+                ${noteDetails.score?.color === "GRAY" && "bg-gray-500 text-white"}
+                ${
+                  noteDetails.score?.color === "BLACK" && "bg-black text-white"
+                }`}
+                        >
+                          {noteDetails.score?.color.toLowerCase()}
+                        </span>
                       </>
                     ) : (
                       <>
@@ -295,18 +311,32 @@ const Notes = ({ loanStatus, getPendingCount }) => {
                             new
                           </div>
                         )}
+                        {noteDetails.dpd30os.attribute !== "NULL" && (
+                          <div className="badge badge-error badge-xs ml-2 p-2 text-white">
+                            DPD 31
+                          </div>
+                        )}
                       </>
                     )}
                   </td>
                   <td>{noteDetails?.loanNumber || ""}</td>
                   <td>{formatToPeso(noteDetails?.loanAmount)}</td>
-                  <td>{formatDate(noteDetails?.applicationDate)}</td>
+                  <td>
+                    {formatDate(
+                      new Date(noteDetails?.applicationDate),
+                      "MMM dd, yyyy"
+                    )}
+                  </td>
                   <td>{noteDetails?.rm.name || "-"}</td>
                   <td>{noteDetails?.cm.name || "-"}</td>
                   <td>
                     {loanStatus === "done" ? (
                       <>
-                        {formatDate(noteDetails?.score?.runDate)} <br />
+                        {formatDate(
+                          new Date(noteDetails?.score?.runDate),
+                          "MMM dd, yyyy"
+                        )}{" "}
+                        <br />
                         {noteDetails?.score?.decision &&
                           noteDetails?.score?.decision
                             ?.split(",")
@@ -321,7 +351,7 @@ const Notes = ({ loanStatus, getPendingCount }) => {
                         {noteDetails.documents?.length > 0 && (
                           <>
                             {noteDetails.documents?.map((doc) => (
-                              <span className="badge badge-error text-white flex items-center m-1 text-xs">
+                              <span className="badge badge-error text-white flex items-center m-1 text-xs overflow-ellipsis whitespace-nowrap">
                                 {doc}
                               </span>
                             ))}
@@ -351,7 +381,7 @@ const Notes = ({ loanStatus, getPendingCount }) => {
             >
               Run Assessment For All Selected
             </button>
-            {loanStatus === "pending" ? (
+            {/* {loanStatus === "pending" ? (
               <div className="join">
                 <button className="join-item btn btn-sm btn-active">1</button>
                 <button className="join-item btn btn-sm">2</button>
@@ -360,21 +390,23 @@ const Notes = ({ loanStatus, getPendingCount }) => {
               </div>
             ) : (
               <></>
-            )}
+            )} */}
           </div>
-          <Suspense
-            fallback={
-              <div className="h-screen flex items-center justify-center">
-                <span className="loading loading-dots loading-lg"></span>
-              </div>
-            }
-          >
-            <AssessmentDrawer
-              ref={drawerRef}
-              selectedNote={selectedNote}
-              doReload={getNotes}
-            />
-          </Suspense>
+          {loanStatus === "done" && (
+            <Suspense
+              fallback={
+                <div className="h-screen flex items-center justify-center">
+                  <span className="loading loading-dots loading-lg"></span>
+                </div>
+              }
+            >
+              <AssessmentDrawer
+                ref={drawerRef}
+                selectedNote={selectedNote}
+                doReload={getNotes}
+              />
+            </Suspense>
+          )}
         </div>
       )}
     </>
