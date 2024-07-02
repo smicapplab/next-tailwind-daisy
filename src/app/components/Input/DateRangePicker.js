@@ -37,13 +37,11 @@ const DateRangePicker = ({ onDateRangeChange }) => {
   const updateEndDate = (newEndMonth, newEndYear) => {
     const updatedEndMonth = newEndMonth || endMonth;
     const updatedEndYear = newEndYear || endYear;
-    console.log(updatedEndMonth, updatedEndYear);
     setEndMonth(updatedEndMonth);
     setEndYear(updatedEndYear);
   };
 
   useEffect(() => { 
-    console.log(startMonth, startYear, endMonth, endYear)
     onDateRangeChange({
       startDate: `${startMonth.padStart(2, "0")}-${startYear}`, 
       endDate: `${endMonth.padStart(2, "0")}-${endYear}`

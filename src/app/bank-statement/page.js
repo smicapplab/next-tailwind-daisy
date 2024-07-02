@@ -93,6 +93,8 @@ function BankStatement() {
             type: "error",
           });
         }
+
+        await getStatements();
       }
     } catch (e) {
       console.error(e);

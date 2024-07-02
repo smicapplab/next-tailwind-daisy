@@ -6,11 +6,11 @@ const {
 } = require("@aws-sdk/client-textract");
 
 let credentials = {};
-if (process.env.accessKeyId && process.env.secretAccessKey) {
+if (process.env.EXT_ACCESS_KEY_ID && process.env.EXT_SECRET_ACCESS_KEY) {
   credentials = {
     credentials: {
-      accessKeyId: process.env.accessKeyId,
-      secretAccessKey: process.env.secretAccessKey,
+      accessKeyId: process.env.EXT_ACCESS_KEY_ID,
+      secretAccessKey: process.env.EXT_SECRET_ACCESS_KEY,
     },
   };
 }
@@ -67,7 +67,6 @@ const toCamelCase = (str) => {
 
 const parseForm = (response) => {
   if (!response || !response.Blocks) {
-    console.log("No blocks found in Textract response");
     return;
   }
 
@@ -102,7 +101,6 @@ const parseForm = (response) => {
 
 const parseTables = (response) => {
   if (!response || !response.Blocks) {
-    console.log("No blocks found in Textract response");
     return;
   }
 

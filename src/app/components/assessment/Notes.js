@@ -11,6 +11,8 @@ import React, {
 import { ToastContext } from "@/app/store/context/ToastContextProvider";
 import { SearchIcon } from "../Icons/SearchIcon";
 import { formatDate } from "date-fns";
+import ClearIcon from "../Icons/ClearIcon";
+import Comments from "./Comments";
 const AssessmentDrawer = lazy(() => import("./AssessmentDrawer"));
 const MenuIcon = lazy(() => import("../Icons/MenuIcon"));
 const CreditParameter = lazy(() => import("./CreditParameter.js"));
@@ -24,14 +26,36 @@ const headers = [
   "CM",
 ];
 
+const filterTableData = (tableData, filters) => {
+  return tableData.filter((item) => {
+    const filterByCM = filters.cm ? item.cm.name.includes(filters.cm) : true;
+    const filterByRM = filters.rm ? item.rm.name.includes(filters.rm) : true;
+    const filterByIssuer = filters.issuer
+      ? item.businessName.includes(filters.issuer)
+      : true;
+    const filterByKeyword = filters.keyword
+      ? item.loanNumber.includes(filters.keyword)
+      : true;
+
+    return filterByCM && filterByRM && filterByIssuer && filterByKeyword;
+  });
+};
+
 const Notes = ({ loanStatus, getPendingCount }) => {
   const { addToast } = useContext(ToastContext);
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const [selectedNote, setSelectedNote] = useState({});
   const [loading, setLoading] = useState(false);
+  const [bulkLoading, setBulkLoading] = useState(false);
   const [tableData, setTableData] = useState([]);
 
+  const [filters, setFilters] = useState({
+    keyword: "",
+    cm: "",
+    rm: "",
+    issuer: "",
+  });
   const [cms, setCms] = useState([]);
   const [rms, setRms] = useState([]);
   const [issuers, setIssuers] = useState([]);
@@ -48,16 +72,25 @@ const Notes = ({ loanStatus, getPendingCount }) => {
     setIssuers([...new Set(issuerValues)]);
   };
 
+  const clearFilters = () => {
+    setFilters({
+      keyword: "",
+      cm: "",
+      rm: "",
+      issuer: "",
+    });
+  };
+
   const getNotes = async () => {
     setLoading(true);
     try {
       const data = await postApi("assessment/get-notes", {
         loanStatus,
       });
+
       if (getPendingCount) {
         await getPendingCount();
       }
-
       setTableData(data.notes);
     } catch (err) {
       addToast({
@@ -87,9 +120,21 @@ const Notes = ({ loanStatus, getPendingCount }) => {
     );
   };
 
-  const handleSubmit = () => {
-    console.log("Selected Rows:", selectedRows);
-    // Add your submission logic here
+  const handleSubmit = async () => {
+    setBulkLoading(true);
+    try {
+      await postApi("assessment/bulk-assessment", {
+        selectedRows,
+      });
+      await getNotes();
+    } catch (err) {
+      addToast({
+        message: "It is what it is... error eh? Luckily this is a test. Ooops!",
+        type: "error",
+      });
+    } finally {
+      setBulkLoading(false);
+    }
   };
 
   const openCreditModal = (noteDetails) => {
@@ -98,8 +143,16 @@ const Notes = ({ loanStatus, getPendingCount }) => {
   };
 
   const openCommentModal = (noteDetails) => {
-    // setSelectedNote(noteDetails);
-    // document.getElementById("credit-modal").showModal();
+    setSelectedNote(noteDetails);
+    document.getElementById("comment-modal").showModal();
+  };
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [name]: value,
+    }));
   };
 
   useEffect(() => {
@@ -144,6 +197,8 @@ const Notes = ({ loanStatus, getPendingCount }) => {
     setSelectedNote({});
   }, []);
 
+  const filteredData = filterTableData(tableData, filters);
+
   const ActionMenu = (noteDetails) => {
     return (
       <div className="dropdown">
@@ -162,11 +217,6 @@ const Notes = ({ loanStatus, getPendingCount }) => {
               <a onClick={() => openDrawer(noteDetails)}>View Results</a>
             </li>
           )}
-          <li>
-            <a onClick={() => openCommentModal(noteDetails)}>
-              Add/View Comments
-            </a>
-          </li>
         </ul>
       </div>
     );
@@ -187,52 +237,69 @@ const Notes = ({ loanStatus, getPendingCount }) => {
             <div className="card-body">
               <div className="w-full max-w-lg">
                 <label className="input input-bordered flex items-center gap-2">
-                  <input type="text" className="grow" placeholder="Search" />
+                  <input
+                    name="keyword"
+                    type="text"
+                    className="grow"
+                    placeholder="Search"
+                    value={filters.keyword}
+                    onChange={handleFilterChange}
+                  />
                   <SearchIcon />
                 </label>
               </div>
               <div className="w-full flex align-middle">
-                <select className="select select-bordered w-full max-w-xs mr-1">
-                  <option disabled selected>
+                <select
+                  name="issuer"
+                  className="select select-bordered w-full max-w-xs mr-1"
+                  value={filters.issuer}
+                  onChange={handleFilterChange}
+                >
+                  <option value="" disabled>
                     Issuers
                   </option>
-                  {issuers?.map((issuer) => (
-                    <option key={issuer}>{issuer}</option>
+                  {issuers?.map((issuer, i) => (
+                    <option key={i} value={issuer}>
+                      {issuer}
+                    </option>
                   ))}
                 </select>
-                <select className="select select-bordered w-full max-w-xs mr-1">
-                  <option disabled selected>
+                <select
+                  name="rm"
+                  className="select select-bordered w-full max-w-xs mr-1"
+                  value={filters.rm}
+                  onChange={handleFilterChange}
+                >
+                  <option value="" disabled>
                     Relationship Managers
                   </option>
-                  {rms?.map((rm) => (
-                    <option key={rm}>{rm}</option>
+                  {rms?.map((rm, i) => (
+                    <option key={i} value={rm}>
+                      {rm}
+                    </option>
                   ))}
                 </select>
 
-                <select className="select select-bordered w-full max-w-xs mr-1">
-                  <option disabled selected>
+                <select
+                  name="cm"
+                  className="select select-bordered w-full max-w-xs mr-1"
+                  value={filters.cm}
+                  onChange={handleFilterChange}
+                >
+                  <option value="" disabled>
                     Credit Managers
                   </option>
-                  {cms?.map((cm) => (
-                    <option key={cm}>{cm}</option>
+                  {cms?.map((cm, i) => (
+                    <option key={i} value={cm}>
+                      {cm}
+                    </option>
                   ))}
                 </select>
-
-                <button className="btn btn-square btn-primary">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L14 12.414V19a1 1 0 01-1.447.894l-4-2A1 1 0 018 17V12.414L3.293 6.707A1 1 0 013 6V4z"
-                    />
-                  </svg>
+                <button
+                  className="btn btn-neutral ml-2 text-white"
+                  onClick={clearFilters}
+                >
+                  <ClearIcon /> Clear Filter
                 </button>
               </div>
             </div>
@@ -251,7 +318,10 @@ const Notes = ({ loanStatus, getPendingCount }) => {
                   </label>
                 </th>
                 {headers.map((h) => (
-                  <th className="text-center text-primary font-semibold text-sm">
+                  <th
+                    key={h}
+                    className="text-center text-primary font-semibold text-sm"
+                  >
                     {h}
                   </th>
                 ))}
@@ -265,7 +335,7 @@ const Notes = ({ loanStatus, getPendingCount }) => {
             </thead>
 
             <tbody>
-              {tableData.map((noteDetails) => (
+              {filteredData.map((noteDetails) => (
                 <tr key={noteDetails.loanNumber}>
                   <td>
                     <input
@@ -296,7 +366,10 @@ const Notes = ({ loanStatus, getPendingCount }) => {
                         <span
                           className={`badge badge-xs ml-1 p-2
                 ${noteDetails.score?.color === "WHITE" && "badge-outline"}
-                ${noteDetails.score?.color === "GRAY" && "bg-gray-500 text-white"}
+                ${
+                  noteDetails.score?.color === "GRAY" &&
+                  "bg-gray-500 text-white"
+                }
                 ${
                   noteDetails.score?.color === "BLACK" && "bg-black text-white"
                 }`}
@@ -338,20 +411,24 @@ const Notes = ({ loanStatus, getPendingCount }) => {
                         )}{" "}
                         <br />
                         {noteDetails?.score?.decision &&
-                          noteDetails?.score?.decision
-                            ?.split(",")
-                            .map((d) => (
-                              <span className="badge badge-error badge-xs p-2 mr-2 text-white">
-                                {d.trim()}
-                              </span>
-                            ))}
+                          noteDetails?.score?.decision?.split(",").map((d) => (
+                            <span
+                              key={d}
+                              className="badge badge-error badge-xs p-2 mr-2 text-white"
+                            >
+                              {d.trim()}
+                            </span>
+                          ))}
                       </>
                     ) : (
                       <>
                         {noteDetails.documents?.length > 0 && (
                           <>
                             {noteDetails.documents?.map((doc) => (
-                              <span className="badge badge-error text-white flex items-center m-1 text-xs overflow-ellipsis whitespace-nowrap">
+                              <span
+                                key={doc}
+                                className="badge badge-error text-white flex items-center m-1 text-xs overflow-ellipsis whitespace-nowrap"
+                              >
                                 {doc}
                               </span>
                             ))}
@@ -372,25 +449,24 @@ const Notes = ({ loanStatus, getPendingCount }) => {
           >
             <CreditParameter selectedNote={selectedNote} doReload={getNotes} />
           </Suspense>
+          <Suspense
+            fallback={<span className="loading loading-dots loading-lg"></span>}
+          >
+            <Comments selectedNote={selectedNote} doReload={getNotes} />
+          </Suspense>
           <div className="divider w-full"></div>
           <div className="p-5 flex justify-between">
-            <button
-              className={`btn btn-primary`}
-              onClick={handleSubmit}
-              disabled={selectedRows.length === 0}
-            >
-              Run Assessment For All Selected
-            </button>
-            {/* {loanStatus === "pending" ? (
-              <div className="join">
-                <button className="join-item btn btn-sm btn-active">1</button>
-                <button className="join-item btn btn-sm">2</button>
-                <button className="join-item btn btn-sm">3</button>
-                <button className="join-item btn btn-sm">4</button>
-              </div>
+            {bulkLoading ? (
+              <span className="loading loading-dots loading-lg"></span>
             ) : (
-              <></>
-            )} */}
+              <button
+                className={`btn btn-primary`}
+                onClick={() => handleSubmit()}
+                disabled={selectedRows.length === 0}
+              >
+                Run Assessment For All Selected
+              </button>
+            )}
           </div>
           {loanStatus === "done" && (
             <Suspense

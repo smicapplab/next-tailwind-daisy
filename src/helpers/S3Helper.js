@@ -8,13 +8,13 @@ const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 
 const getS3CLient = () => {
   let credentials = {};
-  if( process.env.accessKeyId && process.env.secretAccessKey ){
+  if (process.env.EXT_ACCESS_KEY_ID && process.env.EXT_SECRET_ACCESS_KEY) {
     credentials = {
       credentials: {
-        accessKeyId: process.env.accessKeyId,
-        secretAccessKey: process.env.secretAccessKey,
+        accessKeyId: process.env.EXT_ACCESS_KEY_ID,
+        secretAccessKey: process.env.EXT_SECRET_ACCESS_KEY,
       },
-    }
+    };
   }
 
   const s3Client = new S3Client({

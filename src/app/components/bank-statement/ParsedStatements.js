@@ -1,15 +1,31 @@
 import { format } from "date-fns";
+import OpenIcon from "../Icons/OpenIcon";
+import StatementDrawer from "./StatementDrawer";
+import { useState } from "react";
 
 const headers = ["Business Name", "Bank", "Upload Date", "Status", ""];
 
 const ParsedStatements = ({ statements }) => {
+  const [selectedStatement, setSelectedStatement] = useState(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const openInfo = (statement) => {
+    setSelectedStatement(statement);
+    setIsDrawerOpen(true);
+  };
+
+  const closeDrawer = () => {
+    setIsDrawerOpen(false);
+    setSelectedStatement(null);
+  };
+
   return (
     <div className="w-full">
       <table className="table">
         <thead>
           <tr>
-            {headers.map((h) => (
-              <th className="text-center text-primary font-semibold text-sm">
+            {headers.map((h, index) => (
+              <th key={index} className="text-center text-primary font-semibold text-sm">
                 {h}
               </th>
             ))}
@@ -17,18 +33,23 @@ const ParsedStatements = ({ statements }) => {
         </thead>
         <tbody>
           {statements.map(
-            ({ sk, issuer: { businessName }, bank, status }, i) => (
+            (statement, i) => (
               <tr key={i}>
-                <td>{businessName}</td>
-                <td>{bank.name}</td>
+                <td>{statement.issuer.businessName}</td>
+                <td>{statement.bank.name}</td>
                 <td className="text-center">
-                  {format(new Date(sk), "MMM dd, yyyy hh:ss a")}
+                  {format(new Date(statement.sk), "MMM dd, yyyy hh:ss a")}
                 </td>
                 <td className="text-center">
-                  {status === "PENDING" ? (
+                  {statement.skStatus === "PENDING" ? (
                     <span className="loading loading-spinner loading-xs"></span>
                   ) : (
-                    ""
+                    <span 
+                      className="flex justify-center items-center w-full h-full cursor-pointer"
+                      onClick={() => openInfo(statement)}
+                    >
+                      <OpenIcon />
+                    </span>
                   )}
                 </td>
                 <td></td>
@@ -37,6 +58,12 @@ const ParsedStatements = ({ statements }) => {
           )}
         </tbody>
       </table>
+      {isDrawerOpen && (
+        <StatementDrawer 
+          selectedStatement={selectedStatement} 
+          closeDrawer={closeDrawer} 
+        />
+      )}
     </div>
   );
 };
