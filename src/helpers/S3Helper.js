@@ -90,4 +90,4 @@ const getPresignedDownloadUrl = async ({ bucket, key, expiresIn = 3600 }) => {
   }
 };
 
-module.exports = { uploadToS3, getPresignedUploadUrl, getPresignedDownloadUrl };
+export { uploadToS3, getPresignedUploadUrl, getPresignedDownloadUrl };

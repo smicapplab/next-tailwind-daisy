@@ -11,44 +11,44 @@ export async function POST(req) {
         headers: { Authorization: `Bearer ${access_token}` },
       }
     );
-    const token = jwt.sign(
-      {
-        firstName: userInfo.data.given_name,
-        lastName: userInfo.data.family_name,
-        email: userInfo.data.email,
-        app: "Internal",
-      },
-      process.env.JWT_TOKEN_SECRET,
-      {
+
+    if (userInfo && userInfo.data) {
+      const { sub, name, given_name, family_name, picture, email } =
+        userInfo.data;
+
+      const data = {
+        id: sub,
+        name: name || "",
+        firstName: given_name || "",
+        lastName: family_name || "",
+        picture,
+        email,
+      };
+
+      const token = jwt.sign(data, process.env.JWT_TOKEN_SECRET, {
         expiresIn: "5h",
-      }
-    );
-    const res = await axios.post(
-      `${process.env.AUTH_URL}/do-login`,
-      {
-        token: token,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+      });
 
-    const response = NextResponse.json({
-      success: true,
-      data: res.data,
-    });
+      const response = NextResponse.json({
+        success: true,
+        data,
+      });
 
-    response.cookies.set("jwt", res.data.token, {
-      httpOnly: true,
-      maxAge: 28800, // for testing only
-      domain: process.env.NODE_ENV === "production" ? ".koredor.ph" : "",
-      path: "/",
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      response.cookies.set("jwt", token, {
+        httpOnly: true,
+        maxAge: 28800, // for testing only
+        domain: process.env.NODE_ENV === "production" ? ".koredor.ph" : "",
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+      });
+      return response;
+    }
+
+    NextResponse.json({
+      success: false,
+      message: "Ooooooops! Unknown error has occurred.",
     });
-    return response;
   } catch (e) {
     console.error(e);
     return NextResponse.json({ success: false, error: e });

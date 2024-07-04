@@ -20,4 +20,4 @@ const parseFloatWithCheck = (amount) => {
   }
 }
 
-module.exports = { replaceDotsWithCommasExceptLast, parseFloatWithCheck }
+export { replaceDotsWithCommasExceptLast, parseFloatWithCheck }

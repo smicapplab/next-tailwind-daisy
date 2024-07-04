@@ -256,7 +256,7 @@ const getTextExtractAsync = async ({ jobId }) => {
   }
 };
 
-module.exports = {
+export {
   startTextExtractAsync,
   getTextExtractAsync,
 };
