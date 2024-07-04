@@ -1,5 +1,3 @@
-"use client";
-
 import { useContext, useEffect } from "react";
 import { UserContext } from "../store/context/UserContextProvider";
 import MenuIcon from "./Icons/MenuIcon";

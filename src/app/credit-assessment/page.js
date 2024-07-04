@@ -1,15 +1,34 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { lazy, Suspense, useEffect, useState } from "react";
 import withAuth from "@/helpers/WithAuth";
-import Notes from "../components/assessment/Notes";
+import { postApi } from "@/helpers/api-helpers";
+
+const Notes = lazy(() => import("../components/assessment/Notes"));
 
 function CreditAssessment() {
   const [activeTab, setActiveTab] = useState("tab1");
+  const [pendingCount, setPendingCount] = useState(0);
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
+
+  const getPendingCount = async () => {
+    const data = await postApi("assessment/get-note-count", {
+      loanStatus: "pending",
+    });
+
+    if (data.success) {
+      setPendingCount(data.count);
+    } else {
+      setPendingCount(0);
+    }
+  };
+
+  useEffect(() => {
+    getPendingCount();
+  }, []);
 
   return (
     <div className="drawer-content p-10 container mx-auto">
@@ -27,7 +46,10 @@ function CreditAssessment() {
             }`}
             onClick={() => handleTabClick("tab1")}
           >
-            Pending <span className="badge badge-secondary ml-2">2</span>
+            Pending{" "}
+            <span className="badge badge-secondary ml-2 text-white">
+              {pendingCount}
+            </span>
           </button>
           <button
             className={`tab tab-bordered ${
@@ -39,23 +61,36 @@ function CreditAssessment() {
           >
             Recent
           </button>
-          <button
-            className={`tab tab-bordered ${
-              activeTab === "tab3"
-                ? "tab-active !border-b-2 !border-primary text-primary font-bold"
-                : ""
-            }`}
-            onClick={() => handleTabClick("tab3")}
-          >
-            Search
-          </button>
         </div>
       </div>
 
       <div className="border border-t-0 bg-white w-full">
-        {activeTab === "tab1" && <Notes loanStatus="pending" />}
-        {activeTab === "tab2" && <Notes loanStatus="recent" />}
-        {activeTab === "tab3" && <Notes loanStatus="hits" />}
+        {activeTab === "tab1" && (
+          <Suspense
+            fallback={
+              <div className="h-screen flex items-center justify-center">
+                <span className="loading loading-dots loading-lg"></span>
+              </div>
+            }
+          >
+            <Notes
+              loanStatus="pending"
+              getPendingCount={getPendingCount}
+              pendingCount={pendingCount}
+            />
+          </Suspense>
+        )}
+        {activeTab === "tab2" && (
+          <Suspense
+            fallback={
+              <div className="h-screen flex items-center justify-center">
+                <span className="loading loading-dots loading-lg"></span>
+              </div>
+            }
+          >
+            <Notes loanStatus="done" pendingCount={pendingCount} />
+          </Suspense>
+        )}
       </div>
     </div>
   );

@@ -1,5 +1,3 @@
-"use client";
-
 import { useRouter } from "next/navigation";
 import { useRef } from "react";
 import AssessmentIcon from "./Icons/AssessmentIcon";
@@ -43,7 +41,7 @@ export default function Drawer(props) {
         className="drawer-toggle"
         ref={drawerCheckboxRef}
       />
-      <div className="drawer-side">
+      <div className="drawer-side fixed top-0 left-0 z-50 h-full">
         <label
           htmlFor="koredor-drawer"
           aria-label="close sidebar"
